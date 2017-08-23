@@ -1,0 +1,63 @@
+baseURL = "http://parallel-ssh.org/"
+languageCode = "en-us"
+title = "ParallelSSH"
+theme = "beautifulhugo"
+# Site language. Available translations in the theme's `/i18n` directory.
+defaultContentLanguage = "en"
+# Enable comments by entering your Disqus shortname
+disqusShortname = "parallelssh"
+# Enable Google Analytics by entering your tracking code
+googleAnalytics = "UA-9132694-6"
+paginate = 5
+metaDataFormat = "yaml"
+pygmentsUseClasses = true
+pygmentCodeFences = true
+#disqusShortname = "XXX"
+
+[Params]
+  # subtitle = "Large Scale agent-less automation with SSH"
+  logo = "/static/avatar-icon.png"
+  favicon = "/static/favicon.png"
+  dateFormat = "January 2, 2006"
+  commit = false
+  rss = true
+  comments = true
+
+[Author]
+  name = "Panos Kittenis"
+  website = "parallel-ssh.org"
+  email = "zuboci@yandex.com"
+  github = "ParallelSSH"
+
+[[menu.main]]
+    name = "Blog"
+    url = ""
+    weight = 1
+
+[[menu.main]]
+    name = "About"
+    url = "about/"
+    weight = 3
+
+# [[menu.main]]
+#     identifier = "projects"
+#     name = "Projects"
+#     weight = 2
+
+# [[menu.main]]
+#     parent = "samples"
+#     name = "Big Image Sample"
+#     url = "post/2017-03-07-bigimg-sample"
+#     weight = 1
+
+# [[menu.main]]
+#     parent = "samples"
+#     name = "Math Sample"
+#     url = "post/2017-03-05-math-sample"
+#     weight = 2
+
+# [[menu.main]]
+#     parent = "samples"
+#     name = "Code Sample"
+#     url = "post/2016-03-08-code-sample"
+#     weight = 3

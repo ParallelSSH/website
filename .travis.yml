@@ -1,0 +1,23 @@
+# Install the apt prerequisites
+addons:
+  apt:
+    packages:
+      - python-pygments
+
+# Clean and don't fail
+install:
+  - rm -rf public || exit 0
+
+# Build the website
+script:
+  - binaries/hugo
+
+# Deploy to GitHub pages
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: public
+  github_token:
+    secure: "NZEkEQpU55JKfMA77a/WqYE4ro+039QP3WeOplPzGVRpnZXzqSQ4Z24wsTHPmoJiVOoJOAGe207GBU6xk1aOeyamHpqRzDpmDc3dL9rYnxpUBJbrIsn85yUjfPGvgb28YTYirDiD8l9b9zTnZon8f7NdwSI+ayNg2aHj8bTU4GgANO4IOeG0F8T03rpQQOQue797Ih3D6i1/wHVkQ9KVkSerg2VGOFvYAys7e/haN+aIXaCDltVzYjJj0mOt+I+2fg0GMRG3z39nomJcd1b4NDUUpgAuWaR6toixWOx9SuZefTL2GTbd2P7xh66tKk8BQKOLJtVKVfFKfXf6CZqik1NNemR2GHqdB+5WoeKFUhCB8Tn3M2lLT0fb9+vA8jgHC0v+A+vWrmESKPc52xQuWxZydH1xoEyTM8gxuFtJh941yp4fPfzYFniFpOFX15BDMuFQ0zjbU6muMJ4ZEIsjYWNp2EoWfWYC47M9m/sB3zoEUZE+FH3B7/fLoN1UfORxwiLxUIYqio7ost29wgNRWins2nEqBs8WOZ6bXWySUEo1WRrQSlwwQy3yecUrkSgSa4BllQoxl/fL8HVfcEc//3HWg6KQRX14+9Md6TmQSugZZoh696UnWcXHrd5KaFm4fTIGP4H5kXIPaJJaT483hbYf/5MIhkYZIXZ84r0Tb5k="
+  on:
+    branch: master
