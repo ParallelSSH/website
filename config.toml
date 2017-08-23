@@ -12,7 +12,6 @@ paginate = 5
 metaDataFormat = "yaml"
 pygmentsUseClasses = true
 pygmentCodeFences = true
-#disqusShortname = "XXX"
 
 [Params]
   # subtitle = "Large Scale agent-less automation with SSH"

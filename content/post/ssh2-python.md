@@ -1,5 +1,5 @@
 ---
-title: "The Sad State of Python SSH Libraries"
+title: "The State of Python SSH Libraries"
 date: 2017-08-21T12:06:06+01:00
 draft: true
 ---
@@ -11,7 +11,7 @@ In this post a new option for Python SSH libraries, [ssh2-python](https://github
 
 In looking for a Python SSH library to use in an application, not many options exist. Indeed, the only general purpose library that has, up to now, been available is Paramiko, which implements the SSH2 API in Python.
 
-For better or worse - it is without doubt that the library has helped a great number of people with similar requirements as it has historically been the only option - Paramiko has been the de-facto stanard for Python SSH libraries until now.
+For better or worse - it is without doubt that the library has helped a great number of people with similar requirements as it has historically been the only option - Paramiko has been the de-facto stanard for Python SSH libraries so far.
 
 However, it leaves a lot to be desired from a performance, stability and resource consumption stand point.
 
@@ -39,7 +39,7 @@ The libraries are compared in five separate SSH operations, as well as total tim
 
 The four operations compared are:
 
-* Session initialisation and authentication (`auth`)
+* Session initialisation and authentication with SSH agent (`auth`)
 * Channel open (`channel_open`)
 * Channel execute shell command, `cat` on a static file (`execute`)
 * Channel read - (`channel_read`)
