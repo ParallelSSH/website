@@ -1,7 +1,6 @@
 ---
 title: "About"
-date: 2017-08-21T13:32:39+01:00
-draft: true
+date: 2017-08-26T01:16:31+01:00
 ---
 
 Full-stack developer from hardware, OS and applications in C/C++, Python, Scala, Ruby, multiple query languages and more. More than a decade and counting experience in areas from low latency trading platforms and large scale distributed back-end micro services utilising big data NoSQL databases, NoSQL, SQL and SQL-like development, time series data and much more.

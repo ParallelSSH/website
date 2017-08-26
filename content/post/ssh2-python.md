@@ -1,9 +1,7 @@
 ---
 title: "The State of Python SSH Libraries"
-date: 2017-08-21T12:06:06+01:00
-draft: true
+date: 2017-08-26T01:17:03+01:00
 ---
-
 
 # Preface
 
