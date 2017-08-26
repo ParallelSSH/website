@@ -1,11 +1,11 @@
-baseURL = "http://parallel-ssh.org/"
+baseURL = "https://parallel-ssh.org/"
 languageCode = "en-us"
 title = "ParallelSSH"
 theme = "beautifulhugo"
 # Site language. Available translations in the theme's `/i18n` directory.
 defaultContentLanguage = "en"
 # Enable comments by entering your Disqus shortname
-disqusShortname = "parallelssh"
+disqusShortname = "parallel-ssh"
 # Enable Google Analytics by entering your tracking code
 googleAnalytics = "UA-9132694-6"
 paginate = 5
