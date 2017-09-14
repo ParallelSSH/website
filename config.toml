@@ -12,6 +12,7 @@ paginate = 5
 metaDataFormat = "yaml"
 pygmentsUseClasses = true
 pygmentCodeFences = true
+enableRobotsTXT = true
 
 [Params]
   # subtitle = "Large Scale agent-less automation with SSH"
