@@ -15,13 +15,12 @@ pygmentCodeFences = true
 enableRobotsTXT = true
 
 [Params]
-  # subtitle = "Large Scale agent-less automation with SSH"
   logo = "/static/avatar-icon.png"
   favicon = "/static/favicon.png"
   dateFormat = "January 2, 2006"
   commit = false
   rss = true
-  comments = true
+  comments = false
 
 [Author]
   name = "Panos Kittenis"
@@ -39,25 +38,19 @@ enableRobotsTXT = true
     url = "about/"
     weight = 3
 
-# [[menu.main]]
-#     identifier = "projects"
-#     name = "Projects"
-#     weight = 2
+[[menu.main]]
+    identifier = "projects"
+    name = "Projects"
+    weight = 2
 
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Big Image Sample"
-#     url = "post/2017-03-07-bigimg-sample"
-#     weight = 1
+[[menu.main]]
+    parent = "projects"
+    name = "parallel-ssh"
+    url = "https://github.com/ParallelSSH/parallel-ssh"
+    weight = 1
 
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Math Sample"
-#     url = "post/2017-03-05-math-sample"
-#     weight = 2
-
-# [[menu.main]]
-#     parent = "samples"
-#     name = "Code Sample"
-#     url = "post/2016-03-08-code-sample"
-#     weight = 3
+[[menu.main]]
+    parent = "projects"
+    name = "ssh2-python"
+    url = "https://github.com/ParallelSSH/ssh2-python"
+    weight = 2
