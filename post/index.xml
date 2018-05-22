@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on ParallelSSH</title>
+    <link>https://parallel-ssh.org/post/</link>
+    <description>Recent content in Posts on ParallelSSH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>zuboci@yandex.com (Panos Kittenis)</managingEditor>
+    <webMaster>zuboci@yandex.com (Panos Kittenis)</webMaster>
+    <lastBuildDate>Sun, 20 May 2018 19:03:01 +0100</lastBuildDate>
+    
+	<atom:link href="https://parallel-ssh.org/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>parallel-ssh 1.6.0 release</title>
+      <link>https://parallel-ssh.org/post/parallel-ssh-1.6.0/</link>
+      <pubDate>Sun, 20 May 2018 19:03:01 +0100</pubDate>
+      <author>zuboci@yandex.com (Panos Kittenis)</author>
+      <guid>https://parallel-ssh.org/post/parallel-ssh-1.6.0/</guid>
+      <description>Version 1.6.0 has been released with many additions and fixes. Get it on PyPi.
+Main Changes  SCP send and receive support for native clients. Better exception messages showing underlying error for native clients. host parameter added to all exceptions raised by parallel clients to better support per-host exception handling. Clearer imports by moving clients to their own package. Deprecation warning for default client changing from paramiko to native client as of 2.</description>
+    </item>
+    
+    <item>
+      <title>parallel-ssh Clients</title>
+      <link>https://parallel-ssh.org/post/parallel-ssh-libssh2/</link>
+      <pubDate>Sat, 14 Oct 2017 15:00:01 +0100</pubDate>
+      <author>zuboci@yandex.com (Panos Kittenis)</author>
+      <guid>https://parallel-ssh.org/post/parallel-ssh-libssh2/</guid>
+      <description>In a previous post a comparison was shown between two SSH library options for Python, with emphasis on their performance using native threads for scaling purposes.
+For this post, their non-blocking performance using the gevent library will be compared as the two SSH library options available now in parallel-ssh.
+Post has been updated with further scaling graphs for both clients.
+Test Setup Test script (see appendix) consists of identical parallel-ssh code for the two available parallel clients in the library, using paramiko and libssh2 via ssh2-python respectively as the underlying SSH libraries.</description>
+    </item>
+    
+    <item>
+      <title>The State of Python SSH Libraries</title>
+      <link>https://parallel-ssh.org/post/ssh2-python/</link>
+      <pubDate>Sat, 26 Aug 2017 01:17:03 +0100</pubDate>
+      <author>zuboci@yandex.com (Panos Kittenis)</author>
+      <guid>https://parallel-ssh.org/post/ssh2-python/</guid>
+      <description>Preface In this post a new option for Python SSH libraries, ssh2-python, shall be compared to Paramiko to demonstrate their respective performance with particular emphasis on concurrency and non-blocking requests.
+In looking for a Python SSH library to use in an application, not many options exist. Indeed, the only general purpose library that has, up to now, been available is Paramiko, which implements the SSH2 API in Python code.</description>
+    </item>
+    
+  </channel>
+</rss>

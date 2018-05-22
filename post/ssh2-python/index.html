@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>The State of Python SSH Libraries</title>
+  <meta property="og:title" content="The State of Python SSH Libraries" />
+  <meta name="twitter:title" content="The State of Python SSH Libraries" />
+  <meta name="description" content="Preface In this post a new option for Python SSH libraries, ssh2-python, shall be compared to Paramiko to demonstrate their respective performance with particular emphasis on concurrency and non-blocking requests.
+In looking for a Python SSH library to use in an application, not many options exist. Indeed, the only general purpose library that has, up to now, been available is Paramiko, which implements the SSH2 API in Python code.">
+  <meta property="og:description" content="Preface In this post a new option for Python SSH libraries, ssh2-python, shall be compared to Paramiko to demonstrate their respective performance with particular emphasis on concurrency and non-blocking requests.
+In looking for a Python SSH library to use in an application, not many options exist. Indeed, the only general purpose library that has, up to now, been available is Paramiko, which implements the SSH2 API in Python code.">
+  <meta name="twitter:description" content="Preface In this post a new option for Python SSH libraries, ssh2-python, shall be compared to Paramiko to demonstrate their respective performance with particular emphasis on concurrency and …">
+  <meta name="author" content="Panos Kittenis"/>
+  <link href='https://parallel-ssh.org/static/favicon.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://parallel-ssh.org/static/avatar-icon.png" />
+  <meta name="twitter:image" content="https://parallel-ssh.org/static/avatar-icon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="https://parallel-ssh.org/post/ssh2-python/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ParallelSSH" />
+
+  <meta name="generator" content="Hugo 0.40.3" />
+  <link rel="canonical" href="https://parallel-ssh.org/post/ssh2-python/" />
+  <link rel="alternate" href="https://parallel-ssh.org/index.xml" type="application/rss+xml" title="ParallelSSH">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://parallel-ssh.org/css/main.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://parallel-ssh.org/css/pygment_highlights.css" />
+  <link rel="stylesheet" href="https://parallel-ssh.org/css/highlight.min.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-9132694-6', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://parallel-ssh.org/">ParallelSSH</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Projects</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://github.com/ParallelSSH/parallel-ssh">parallel-ssh</a>
+                
+                  <a href="https://github.com/ParallelSSH/ssh2-python">ssh2-python</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="ParallelSSH" href="https://parallel-ssh.org/">
+            <img class="avatar-img" src="https://parallel-ssh.org/static/avatar-icon.png" alt="ParallelSSH" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>The State of Python SSH Libraries</h1>
+                
+                
+                  <span class="post-meta">
+  Posted on August 26, 2017
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<h1 id="preface">Preface</h1>
+
+<p>In this post a new option for Python SSH libraries, <a href="https://github.com/ParallelSSH/ssh2-python">ssh2-python</a>, shall be compared to Paramiko to demonstrate their respective performance with particular emphasis on concurrency and non-blocking requests.</p>
+
+<p>In looking for a Python SSH library to use in an application, not many options exist. Indeed, the only general purpose library that has, up to now, been available is Paramiko, which implements the SSH2 API in Python code.</p>
+
+<p>For better or worse - it is without doubt that the library has helped a great number of people with similar requirements, this author included as it has historically been the only option - Paramiko has been the de-facto stanard for Python SSH libraries so far.</p>
+
+<p>However, it leaves a lot to be desired of from a performance, stability and resource consumption stand point.</p>
+
+<p>Luckily, there is now another option in the form of <code>ssh2-python</code> which is based on the <a href="https://www.libssh2.org">libssh2</a> C library.</p>
+
+<p>Many automation applications like <a href="https://www.ansible.com/">Ansible</a> and <a href="https://github.com/fabric/fabric">Fabric</a> make use of Paramiko and would likely be interested in knowing other options now exist. Hopefully this post will help these and other applications determine which library is better suited.</p>
+
+<h1 id="performance-comparison">Performance Comparison</h1>
+
+<p><a href="https://github.com/ParallelSSH/ssh2-python">ssh2-python</a> is a new Python SSH library based on the <a href="https://www.libssh2.org">libssh2</a> C library. It has no dependencies and provides Linux, OSX and Windows binary wheels with <code>libssh2</code> included.</p>
+
+<p><a href="https://github.com/paramiko/paramiko">paramiko</a> is written in Python and makes use of native extension dependencies like cryptography. It supports Linux, OSX and Windows and its native dependencies provide binary wheels.</p>
+
+<h2 id="test-setup">Test Setup</h2>
+
+<p>Test is using Python&rsquo;s <code>threading</code> standard library for concurrency. A subsequent blog post will examine non-blocking performance in the libraries via the <a href="http://gevent.org">gevent</a> co-routine library.</p>
+
+<p>While threading is not a good model for scaling concurrency of network I/O, it is the only concurrency mode Paramiko supports natively and is what is used by applications like Ansible. Other projects like <a href="https://github.com/ParallelSSH/parallel-ssh">parallel-ssh</a>, of which am also author of, use gevent&rsquo;s monkey patching to make Paramiko co-operatively concurrent. That too comes with significant drawbacks which the currently in-development <code>ssh2-python</code> based natively non-blocking client aims to solve. See the <a href="https://github.com/ParallelSSH/parallel-ssh/pull/86">work in progress pull request</a> for more details on that.</p>
+
+<p>The test script creates SSH sessions in parallel to an SSH server (OpenSSH) via loop back device (localhost), starting from one and increasing by one each iteration until completion. This shows how the two libraries scale as number of parallel sessions increases.</p>
+
+<p>Maximum number of threads and therefor parallel sessions are set to 50. All tests are performed on a quad physical core CPU.</p>
+
+<p>In all tests the latest available version of each library is used, <code>2.2.1</code> and <code>0.5.3</code> for Paramiko and ssh2-python respectively. For <code>ssh2-python</code> an embedded <code>libssh2</code> was used, latest available version <code>1.8.0</code>. All tests performed under Python <code>2.7</code>.</p>
+
+<p>The libraries are compared in six separate SSH operations, as well as total time spent from start to finish per SSH session.</p>
+
+<p>The six operations compared are:</p>
+
+<ul>
+<li>Session initialisation and authentication with SSH agent (<code>auth</code>)</li>
+<li>Channel open (<code>channel_open</code>)</li>
+<li>Channel execute (<code>execute</code>)</li>
+<li>Channel read - (<code>channel_read</code>)</li>
+<li>Channel close and get exit status (<code>close_and_exit_status</code>)</li>
+<li>SFTP read (<code>sftp_read</code>)</li>
+</ul>
+
+<p>A quick explanation of what these operations do:</p>
+
+<ul>
+<li>Session initialisation and authentication - perform handshake with SSH server and authenticate via a system SSH agent.</li>
+<li>Channel open - one new SSH channel on an authenticated session is required to be opened per remote command to run.</li>
+<li>Channel execute - run shell command <code>cat</code> on a static file</li>
+<li>Channel read - retrieving command output.</li>
+<li>Channel close - performed when command is finished in order to gather exit status.</li>
+<li>SFTP read - initialise SFTP session, open remote file handle, read data. Read data is not written anywhere.</li>
+</ul>
+
+<p>The static file that is used for the <code>cat</code> remote command is a <code>26KB</code> <a href="https://github.com/ParallelSSH/ssh2-python/blob/master/LICENSE">license file from the ssh2-python repository</a>.</p>
+
+<p>The file used for SFTP read is an 11MB compressed tar archive.</p>
+
+<p>All durations are in milliseconds (ms).</p>
+
+<h3 id="test-results">Test Results</h3>
+
+<p>Graphs show median values per thirty second intervals.</p>
+
+<h4 id="all-operations-graph">All Operations Graph</h4>
+
+<p>Here is how the two libraries compare on the five separate operations plus total time spent.</p>
+
+<p>Click on image for a larger version.</p>
+
+<p><a href="/static/ssh2_paramiko.png"><img src="/static/ssh2_paramiko.png" alt="ssh2 paramiko comparison" title="All Operations Comparison" /></a></p>
+
+<p>As can be seen above, Paramiko durations are dominated by SFTP read, authentication and channel open which keep increasing as concurrency ramps up.</p>
+
+<p>For ssh2-python, biggest time spent is in SFTP read followed by auth and channel open.</p>
+
+<p>Both libraries show intermittent spikes in duration that are expected given the number of threads and blocking calls used.</p>
+
+<h4 id="individual-operations">Individual Operations</h4>
+
+<p>Times for operations not including SFTP and total to show a closer view of the rest of timings.</p>
+
+<p>Click on image for a larger version.</p>
+
+<p><a href="/static/ssh2_paramiko_median.png"><img src="/static/ssh2_paramiko_median.png" alt="ssh2 paramiko comparison" title="Individual Operations Comparison" /></a></p>
+
+<h1 id="relative-performance">Relative Performance</h1>
+
+<p>Relative performance of the averages of <em>median</em> operations of the two libraries for the duration of the test. Total and SFTP read durations are for averages.</p>
+
+<p>For example if a <code>Paramiko</code> operation were twice as fast as the equivalent <code>ssh2-python</code> operation, its relative performance would be <code>x0.5</code> of ssh2-python whereas identical durations would result in <code>x1</code> relative performance.</p>
+
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Paramiko</th>
+<th>ssh2</th>
+<th>Paramiko/ssh2-python relative difference</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td>1.16 sec</td>
+<td>675 ms</td>
+<td><code>x1.71</code></td>
+</tr>
+
+<tr>
+<td><code>channel open</code></td>
+<td>1.248 sec</td>
+<td>141 ms</td>
+<td><code>x8.85</code></td>
+</tr>
+
+<tr>
+<td><code>channel read</code></td>
+<td>78 ms</td>
+<td>29 ms</td>
+<td><code>x2.68</code></td>
+</tr>
+
+<tr>
+<td><code>close and exit status</code></td>
+<td>4 ms</td>
+<td>1 ms</td>
+<td><code>x4</code></td>
+</tr>
+
+<tr>
+<td><code>execute</code></td>
+<td>24 ms</td>
+<td>3 ms</td>
+<td><code>x8</code></td>
+</tr>
+
+<tr>
+<td><code>sftp_read</code></td>
+<td>19.35 sec</td>
+<td>1.13 sec</td>
+<td><code>x17.12</code></td>
+</tr>
+
+<tr>
+<td><code>total</code></td>
+<td>20.82 sec</td>
+<td>2.04 s</td>
+<td><code>x10.2</code></td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="postface">Postface</h1>
+
+<p>In all, <code>ssh2-python</code> is shown to be considerably faster, particularly in heavy operations like SFTP, for which reading is some <code>x17</code> times faster on average compared to Paramiko. Other operations that particularly benefit are channel open, <code>x8</code> faster, and execute, also <code>x8</code>. In total in the above test case <code>ssh2-python</code> is shown to be about an order of magnitude (<code>x10</code>) faster on average.</p>
+
+<p>Also note that memory consumption is not graphed, but is significantly lower with <code>ssh2-python</code> as expected as it is based on a native library.</p>
+
+<p>As for comparisons between a pure Python code SSH library and one based on a C library being &ldquo;<em>unfair</em>&rdquo; - the &ldquo;<em>pure</em>&rdquo; Python code library also uses native code extensions for cryptography operations, making the argument moot. Note how the operation with the <em>least</em> performance difference is authentication which is mostly handled by native code extensions in Paramiko.</p>
+
+<p>There is also no requirement to write a low-level SSH API implementation purely in Python. Many reasons not to in fact, as these results go some way in showing.</p>
+
+<h1 id="appendix">Appendix</h1>
+
+<p>Test script used can be found below:</p>
+
+<ul>
+<li><a href="https://gist.github.com/pkittenis/f4a386ea38d09504a7ba429b45babde6#file-perf_test_ssh2-py">Performance test script</a></li>
+</ul>
+
+<p>The test script writes duration data to a local <a href="https://portal.influxdata.com/downloads">InfluxDB</a> via its Graphite service using a <code>measurement.field*</code> <a href="https://github.com/influxdata/influxdb/tree/master/services/graphite#templates">template</a>.</p>
+
+<p>Graphs above were generated by <a href="https://grafana.com">Grafana</a>, as queried from InfluxDB by <a href="https://github.com/InfluxGraph/influxgraph">InfluxGraph</a> using the <a href="https://github.com/InfluxGraph/influxgraph#influxdb-graphite-metric-templates">same template configuration as InfluxDB</a>.</p>
+
+<p>To replicate results, take care to use the exact versions of the libraries used here, including <code>libssh2</code>. Older versions of <code>libssh2</code> are not completely thread safe and will cause crashes.</p>
+
+<p>Disclaimer - While I am the author of <code>ssh2-python</code>, I have no vested interest in either <code>libssh2</code> or <code>Paramiko</code>. My interest in their respective performance is for use in <a href="https://github.com/ParallelSSH/parallel-ssh">parallel-ssh</a>.</p>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+        
+          <li class="next">
+            <a href="https://parallel-ssh.org/post/parallel-ssh-libssh2/" data-toggle="tooltip" data-placement="top" title="parallel-ssh Clients">Next Post &rarr;</a>
+          </li>
+        
+      </ul>
+
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:zuboci@yandex.com" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/ParallelSSH" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="https://parallel-ssh.org/index.xml" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="parallel-ssh.org">Panos Kittenis</a>
+                      
+          
+          
+          &nbsp;&bull;&nbsp;
+          2018
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://parallel-ssh.org/">ParallelSSH</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.40.3</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://parallel-ssh.org/js/main.js"></script>
+<script src="https://parallel-ssh.org/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+<script src="https://parallel-ssh.org/js/load-photoswipe.js"></script>
+
+
+
+  </body>
+</html>
+
